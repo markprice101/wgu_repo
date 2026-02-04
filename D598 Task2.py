@@ -7,6 +7,7 @@ Created on Sat Jan 31 19:19:13 2026
 """
 
 import pandas as pd
+import numpy as np
 
 # Function to remove duplicate data
 def remove_duplicates(df):
@@ -21,7 +22,11 @@ def descriptive_stats_and_grouping(df):
 # Function to calculate Debt-to-Income ratio
 def calculate_debt_to_income(df):
     # Calculation: Long Term Debt / Total Revenue 
-    df['Debt to Income'] = df['Total Long-term Debt'] / df['Total Revenue']
+    df['Debt to Income'] = np.where(
+        df['Total Revenue'] != 0,
+        df['Total Long-term Debt'] / df['Total Revenue'],
+        0
+    )
     return df
 
 # Function to filter out negative Debt-to-Equity ratios
