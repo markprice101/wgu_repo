@@ -13,6 +13,10 @@ import numpy as np
 def remove_duplicates(df):
     return df.drop_duplicates()
 
+# Function to filter out negative Debt-to-Equity ratios
+def filter_negative_debt_to_equity(df):
+    return df[df['Debt to Equity'] >= 0]
+
 # Function for grouping by state and generating descriptive statistics
 def descriptive_stats_and_grouping(df):
     # using 'Business State' as the column name for grouping
@@ -22,16 +26,12 @@ def descriptive_stats_and_grouping(df):
 # Function to calculate Debt-to-Income ratio
 def calculate_debt_to_income(df):
     # Calculation: Long Term Debt / Total Revenue 
-    df['Debt to Income'] = np.where(
-        df['Total Revenue'] != 0,
+    dti_series = np.where(
+        df['Total Revenue'] > 0,
         df['Total Long-term Debt'] / df['Total Revenue'],
-        0
+        np.nan
     )
-    return df
-
-# Function to filter out negative Debt-to-Equity ratios
-def filter_negative_debt_to_equity(df):
-    return df[df['Debt to Equity'] >= 0]
+    return pd.Series(dti_series, name='Debt to Income', index=df.index)
 
 # Main execution block
 try:
@@ -41,14 +41,14 @@ try:
     # 2. data_frame_unique = CALL Duplicate Data Removal
     df = remove_duplicates(df)
 
-    # 3. data_frame_by_state_stat = CALL Descriptive Statistics and Grouping
+    # 3. data_frame_unique = CALL Filter Out Negattive Debt-to-Equity ratios
+    df = filter_negative_debt_to_equity(df)
+
+    # 4. data_frame_by_state_stat = CALL Descriptive Statistics and Grouping
     df2 = descriptive_stats_and_grouping(df)
 
-    # 4. data_frame_unique = CALL Calculate Debt-to-Income
+    # 5. data_frame_unique = CALL Calculate Debt-to-Income
     df = calculate_debt_to_income(df)
-
-    # 5. data_frame_unique = CALL Filter Out Negative Debt-to-Equity
-    df = filter_negative_debt_to_equity(df)
 
     print("Data processing successful.")
     
