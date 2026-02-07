@@ -48,7 +48,8 @@ try:
     df2 = descriptive_stats_and_grouping(df)
 
     # 5. data_frame_unique = CALL Calculate Debt-to-Income
-    df = calculate_debt_to_income(df)
+    new_column = calculate_debt_to_income(df)
+    df = pd.concat([df, new_column], axis = 1)
 
     print("Data processing successful.")
     
